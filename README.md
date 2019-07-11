@@ -22,6 +22,8 @@ Update the `.env` file, then run:
 ./letsencrypt-init.sh
 ```
 
+and follow the prompts
+
 ### Renew
 
 Update the `.env` file, then run:
@@ -84,7 +86,7 @@ This script should be used when first acquiring your Let's Encrypt certificates.
 
 Update the `.env` file to suit your environment. It is recommended to start with `STAGING=1` (example using hostname [dp-dev-1.cyberimpact.us]())
 
-`STAGING=1`:
+First run with `STAGING=1`:
 
 ```console
 $ ./letsencrypt-init.sh
@@ -115,7 +117,7 @@ nginx
 nginx
 ```
 
-`STAGING=0`: Follow the prompts
+On success, run with `STAGING=0` and follow the prompts:
 
 ```console
 $ ./letsencrypt-init.sh
@@ -182,7 +184,7 @@ nginx
 nginx
 ```
 
-On a successful issuance the user should observe a page similar to the following:
+After a successful issuance of certificates the user should observe a page similar to the following:
 
 <img width="80%" alt="Validate Certificate" src="https://user-images.githubusercontent.com/5332509/61080926-161f2b80-a3f4-11e9-9e80-0717a1bc7f8a.png">
 
@@ -242,6 +244,62 @@ nginx
 This script should be used when renewing your Let's Encrypt certificates and the well-known endpoint is already exposed via the existing web server.
 
 Only the `certbot` container is run so that certificates can be updated without having to stop/start the web server.
+
+## Certificate files
+
+Certbot will create a number of files, including your certificates in the directory defined by the `$CERTS` variable. Many of these files will be owned by the `root` user, and care should be taken as their order is important for Cerbot when renewing your certificates.
+
+Example from [dp-dev-1.cyberimpact.us](): `/home/username/certbot/certs`
+
+```console
+$ ls -alh certs/
+...
+drwx------ 3 root         root              41 Jul 11 15:44 accounts
+drwx------ 3 root         root              36 Jul 11 15:44 archive
+drwxr-xr-x 2 root         root              33 Jul 11 15:44 csr
+drwx------ 2 root         root              33 Jul 11 15:44 keys
+drwx------ 3 root         root              49 Jul 11 15:44 live
+drwxr-xr-x 2 root         root              41 Jul 11 15:44 renewal
+drwxr-xr-x 5 root         root              40 Jul 11 15:44 renewal-hooks
+```
+
+```console
+$ tree certs/
+certs/
+├── accounts
+│   └── acme-v02.api.letsencrypt.org
+│       └── directory
+│           └── cad102059f982a03619d6ba2b3f237de
+│               ├── meta.json
+│               ├── private_key.json
+│               └── regr.json
+├── archive
+│   └── dp-dev-1.cyberimpact.us
+│       ├── cert1.pem
+│       ├── chain1.pem
+│       ├── fullchain1.pem
+│       └── privkey1.pem
+├── csr
+│   └── 0000_csr-certbot.pem
+├── keys
+│   └── 0000_key-certbot.pem
+├── live
+│   ├── dp-dev-1.cyberimpact.us
+│   │   ├── cert.pem -> ../../archive/dp-dev-1.cyberimpact.us/cert1.pem
+│   │   ├── chain.pem -> ../../archive/dp-dev-1.cyberimpact.us/chain1.pem
+│   │   ├── fullchain.pem -> ../../archive/dp-dev-1.cyberimpact.us/fullchain1.pem
+│   │   ├── privkey.pem -> ../../archive/dp-dev-1.cyberimpact.us/privkey1.pem
+│   │   └── README
+│   └── README
+├── renewal
+│   └── dp-dev-1.cyberimpact.us.conf
+└── renewal-hooks
+    ├── deploy
+    ├── post
+    └── pre
+
+15 directories, 16 files
+```
 
 ### References
 
