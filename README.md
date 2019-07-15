@@ -101,7 +101,7 @@ Update the `.env` file to suit your environment. It is recommended to start with
 First dry-run with `STAGING=1`:
 
 ```console
-$ ./letsencrypt-init.sh
+$ ./;
 INFO: source environment variables
 
 ### Starting nginx ...
@@ -282,7 +282,26 @@ No renewals were attempted.
 
 ## <a name="cert-files"></a>Certificate files
 
-Certbot will create a number of files, including your certificate in the directory defined by the `CERTS` variable. These files will be owned by the `root` user, and care should be taken as their order is important for Cerbot when renewing your certificate.
+Certbot will create a number of files, including your certificate in the directory defined by the `CERTS` variable. These files will be owned by the `root` user, and care should be taken as their order is important for Certbot when renewing your certificate.
+
+Review the information at: `/home/username/certbot/certs/live/README`
+
+```
+This directory contains your keys and certificates.
+
+`[cert name]/privkey.pem`  : the private key for your certificate.
+`[cert name]/fullchain.pem`: the certificate file used in most server software.
+`[cert name]/chain.pem`    : used for OCSP stapling in Nginx >=1.3.7.
+`[cert name]/cert.pem`     : will break many server configurations, and should not be used
+                 without reading further documentation (see link below).
+
+WARNING: DO NOT MOVE OR RENAME THESE FILES!
+         Certbot expects these files to remain in this location in order
+         to function properly!
+
+We recommend not moving these files. For more information, see the Certbot
+User Guide at https://certbot.eff.org/docs/using.html#where-are-my-certificates.
+```
 
 Example from [dp-dev-1.cyberimpact.us](): `/home/username/certbot/certs`
 
