@@ -101,7 +101,7 @@ Update the `.env` file to suit your environment. It is recommended to start with
 First dry-run with `STAGING=1`:
 
 ```console
-$ ./;
+$ ./letsencrypt-init.sh
 INFO: source environment variables
 
 ### Starting nginx ...
