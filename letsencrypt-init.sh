@@ -105,15 +105,8 @@ if [[ -d "${CERTS}" ]]; then
     if [[ "$decision" == "Y" ]] && [[ "$decision" == "y" ]]; then
     exit
     fi
-    if [[ ${SELINUX} == "1" ]]; then
-      docker run --rm --entrypoint "/bin/rm" -v ${CERTS}:/remove:z,rw nginx:alpine -rf /remove/*
-    else
-      docker run --rm --entrypoint "/bin/rm" -v ${CERTS}:/remove nginx:alpine -rf /remove/*
-    fi
-    rm -rf ${CERTS} ${CERTS_DATA}
-    mkdir -p ${CERTS} ${CERTS_DATA}
 else
-    mkdir -p ${CERTS_DATA}
+    mkdir -p ${CERTS} ${CERTS_DATA}
 fi
 
 echo

@@ -2,7 +2,7 @@
 
 ### What’s Certbot?
 
-Certbot is a free, open source software tool for automatically using [Let’s Encrypt](https://letsencrypt.org/) certificates on manually-administrated websites to enable HTTPS.
+Certbot is a free, open source software tool for automatically using [Let’s Encrypt](https://letsencrypt.org/) certificate on manually-administrated websites to enable HTTPS.
 
 Certbot is made by the [Electronic Frontier Foundation (EFF)](https://www.eff.org/), a 501(c)3 nonprofit based in San Francisco, CA, that defends digital privacy, free speech, and innovation.
 
@@ -10,11 +10,13 @@ This project uses the `--webroot` method of [certificate issuance](https://certb
 
 ![Screen Shot 2019-07-10 at 10 01 02 AM](https://user-images.githubusercontent.com/5332509/61080925-161f2b80-a3f4-11e9-9e8b-51022503eccc.png)
 
+**NOTE**: All included scripts are runnable by non-sudo users (assuming the user is in the `docker` group). The generated output files will however be owned by the `root` user, and as such would require `sudo` level rights to move or manipulate.
+
 ## TL;DR
 
-Assumes that Docker is installed, and that you have `sudo` rights on the machine you wish to install certificates on.
+Assumes that Docker is installed, and that you have `sudo` rights on the machine you wish to install certificate on.
 
-### Initialize
+### Generate initial certificate
 
 Update the `.env` file, then run:
 
@@ -24,17 +26,18 @@ Update the `.env` file, then run:
 
 and follow the prompts
 
-### Renew
+### Renew existing certificate
 
 Update the `.env` file, then run:
 
 ```
 ./letsencrypt-renew.sh
 ```
+and follow the prompts
 
 ## Detailed Overview
 
-### file: `.env`
+### Configuration file: `.env`
 
 Example values are provided, but the `.env` file should be updated to match your host and configuration requirements.
 
@@ -80,21 +83,21 @@ IMPORTANT NOTES:
    making regular backups of this folder is ideal.
 ```
 
-### script: `letsencrypt-init.sh`
+### Generate initial certificate script: `letsencrypt-init.sh`
 
-This script should be used when first acquiring your Let's Encrypt certificates.
+This script should be used when first acquiring your initial Let's Encrypt certificate.
 
 Update the `.env` file to suit your environment. It is recommended to start with `STAGING=1` (example using hostname [dp-dev-1.cyberimpact.us]())
 
-First run with `STAGING=1`:
+First dry-run with `STAGING=1`:
 
 ```console
 $ ./letsencrypt-init.sh
 INFO: source environment variables
 
 ### Starting nginx ...
-b2cbb048627a405c612f16241bcbf48c235c8b9bf8323d45560d3751b47fd9c8
-2019/07/11 19:00:55 [notice] 8#8: signal process started
+d9000f9f1af5d9c7dd39c4f4d8a35ead08065164201850d59771f428c83de86e
+2019/07/15 14:23:48 [notice] 8#8: signal process started
 
 ### Requesting Let's Encrypt certificate for dp-dev-1.cyberimpact.us ...
 Saving debug log to /var/log/letsencrypt/letsencrypt.log
@@ -125,8 +128,8 @@ INFO: source environment variables
 Existing data found for dp-dev-1.cyberimpact.us ... Continue and replace existing certificate? (y/N) y
 
 ### Starting nginx ...
-be60e67f7b5946bc2a51b9785a80587bb98e2240bb01c0ee1da95a4f2af94b7f
-2019/07/11 19:44:09 [notice] 8#8: signal process started
+c01e43258b2ba667548b4c2854bb855e6d0d126e835678b8e8b15748ee0ae46c
+2019/07/15 14:24:47 [notice] 8#8: signal process started
 
 ### Requesting Let's Encrypt certificate for dp-dev-1.cyberimpact.us ...
 Saving debug log to /var/log/letsencrypt/letsencrypt.log
@@ -151,7 +154,7 @@ IMPORTANT NOTES:
    /etc/letsencrypt/live/dp-dev-1.cyberimpact.us/fullchain.pem
    Your key file has been saved at:
    /etc/letsencrypt/live/dp-dev-1.cyberimpact.us/privkey.pem
-   Your cert will expire on 2019-10-09. To obtain a new or tweaked
+   Your cert will expire on 2019-10-13. To obtain a new or tweaked
    version of this certificate in the future, simply run certbot
    again. To non-interactively renew *all* of your certificates, run
    "certbot renew"
@@ -167,7 +170,7 @@ IMPORTANT NOTES:
 
 
 ### Reloading nginx ...
-2019/07/11 19:44:28 [notice] 15#15: signal process started
+2019/07/15 14:25:05 [notice] 15#15: signal process started
 depth=2 O = Digital Signature Trust Co., CN = DST Root CA X3
 verify return:1
 depth=1 C = US, O = Let's Encrypt, CN = Let's Encrypt Authority X3
@@ -175,7 +178,7 @@ verify return:1
 depth=0 CN = dp-dev-1.cyberimpact.us
 verify return:1
 DONE
-2019/07/11 19:44:32 [notice] 22#22: signal process started
+2019/07/15 14:25:09 [notice] 22#22: signal process started
 
 ### Naviage to https://dp-dev-1.cyberimpact.us and verify that your certificate has been installed ...
 
@@ -184,17 +187,18 @@ nginx
 nginx
 ```
 
-After a successful issuance of certificates the user should observe a page similar to the following:
+After a successful issuance of certificate the user should observe a page similar to the following:
 
-<img width="80%" alt="Validate Certificate" src="https://user-images.githubusercontent.com/5332509/61080926-161f2b80-a3f4-11e9-9e80-0717a1bc7f8a.png">
+![certificate validation](https://user-images.githubusercontent.com/5332509/61223736-42d08d00-a6eb-11e9-9215-26dea86b6d08.png)
 
-Along with a valid certificate:
+And if you shared your email address with the Electronic Frontier
+Foundation, you'd receive an email similar to:
 
-<img width="50%" alt="Validate Certificate" src="https://user-images.githubusercontent.com/5332509/61080927-161f2b80-a3f4-11e9-8d7a-f3fccd6ba376.png">
+![eff email](https://user-images.githubusercontent.com/5332509/61223751-49f79b00-a6eb-11e9-9112-db69ac225da1.png)
 
-### script: `letsencrypt-renew.sh`
+### Renew existing certificate script: `letsencrypt-renew.sh`
 
-This script should be used when renewing your Let's Encrypt certificates.
+This script should be used when renewing your existing Let's Encrypt certificate.
 
 Update the `.env` file to suit your environment (example using hostname [dp-dev-1.cyberimpact.us]())
 
@@ -203,8 +207,8 @@ $ ./letsencrypt-renew.sh
 INFO: source environment variables
 
 ### Starting nginx ...
-b7458fea83d268a542f24ad79bde0efc4fa2e7ebd61af7bd4d7b584a22362f13
-2019/07/11 19:47:55 [notice] 8#8: signal process started
+dc87387bd8d15c687961f6fb4e4bf145a7a7b6e03119ae25bc6593073806ab81
+2019/07/15 14:30:57 [notice] 8#8: signal process started
 
 ### Requesting Let's Encrypt certificate renewal for dp-dev-1.cyberimpact.us ...
 Saving debug log to /var/log/letsencrypt/letsencrypt.log
@@ -217,12 +221,12 @@ Cert not yet due for renewal
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 The following certs are not due for renewal yet:
-  /etc/letsencrypt/live/dp-dev-1.cyberimpact.us/fullchain.pem expires on 2019-10-09 (skipped)
+  /etc/letsencrypt/live/dp-dev-1.cyberimpact.us/fullchain.pem expires on 2019-10-13 (skipped)
 No renewals were attempted.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 ### Reloading nginx ...
-2019/07/11 19:48:00 [notice] 15#15: signal process started
+2019/07/15 14:31:02 [notice] 15#15: signal process started
 depth=2 O = Digital Signature Trust Co., CN = DST Root CA X3
 verify return:1
 depth=1 C = US, O = Let's Encrypt, CN = Let's Encrypt Authority X3
@@ -230,7 +234,7 @@ verify return:1
 depth=0 CN = dp-dev-1.cyberimpact.us
 verify return:1
 DONE
-2019/07/11 19:48:04 [notice] 22#22: signal process started
+2019/07/15 14:31:06 [notice] 22#22: signal process started
 
 ### Naviage to https://dp-dev-1.cyberimpact.us and verify that your certificate has been installed ...
 
@@ -239,15 +243,37 @@ nginx
 nginx
 ```
 
-### script: `letsencrypt-renew-alt.sh`
+### Renew existing certificate script (alternate): `letsencrypt-renew-alt.sh`
 
-This script should be used when renewing your Let's Encrypt certificates and the well-known endpoint is already exposed via the existing web server.
+This script should be used when renewing your existing Let's Encrypt certificate and the well-known endpoint is already exposed via the web server.
 
-Only the `certbot` container is run so that certificates can be updated without having to stop/start the web server.
+Only the `certbot` container is run so that certificate can be updated without having to stop/start the web server.
+
+```console
+$ ./letsencrypt-renew-alt.sh
+INFO: source environment variables
+
+Assumes that the well-known endpoint is already exposed for dp-dev-1.cyberimpact.us ... Continue? (y/N) y
+
+### Requesting Let's Encrypt certificate renewal for dp-dev-1.cyberimpact.us ...
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Processing /etc/letsencrypt/renewal/dp-dev-1.cyberimpact.us.conf
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Cert not yet due for renewal
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+The following certs are not due for renewal yet:
+  /etc/letsencrypt/live/dp-dev-1.cyberimpact.us/fullchain.pem expires on 2019-10-13 (skipped)
+No renewals were attempted.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+```
 
 ## Certificate files
 
-Certbot will create a number of files, including your certificates in the directory defined by the `$CERTS` variable. Many of these files will be owned by the `root` user, and care should be taken as their order is important for Cerbot when renewing your certificates.
+Certbot will create a number of files, including your certificate in the directory defined by the `$CERTS` variable. Many of these files will be owned by the `root` user, and care should be taken as their order is important for Cerbot when renewing your certificate.
 
 Example from [dp-dev-1.cyberimpact.us](): `/home/username/certbot/certs`
 
