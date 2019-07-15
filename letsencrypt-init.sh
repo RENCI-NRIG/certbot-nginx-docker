@@ -103,7 +103,10 @@ fi
 if [[ -d "${CERTS}" ]]; then
     read -p "Existing data found for ${DOMAINS[0]} ... Continue and replace existing certificate? (y/N) " decision
     if [[ "$decision" == "Y" ]] && [[ "$decision" == "y" ]]; then
-    exit
+        exit;
+    fi
+    if [[ ! -d "${CERTS_DATA}" ]]; then
+        mkdir -p ${CERTS_DATA}
     fi
 else
     mkdir -p ${CERTS} ${CERTS_DATA}
