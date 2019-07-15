@@ -178,7 +178,7 @@ if [[ ${STAGING} != "1" ]]; then
     _validate_cert_conf
     docker exec nginx nginx -s reload
     echo
-    echo "### Naviage to https://${DOMAINS[0]} and verify that your certificate has been installed ..."
+    echo "### Navigate to https://${DOMAINS[0]} and verify that your certificate has been installed ..."
     echo
     read -p "Press enter when finished ..."
     rm -f validate.html openssl-info.txt
