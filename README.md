@@ -282,29 +282,39 @@ No renewals were attempted.
 
 ## <a name="cert-files"></a>Certificate files
 
-Certbot will create a number of files, including your certificate in the directory defined by the `$CERTS` variable. Many of these files will be owned by the `root` user, and care should be taken as their order is important for Cerbot when renewing your certificate.
+Certbot will create a number of files, including your certificate in the directory defined by the `CERTS` variable. These files will be owned by the `root` user, and care should be taken as their order is important for Cerbot when renewing your certificate.
 
 Example from [dp-dev-1.cyberimpact.us](): `/home/username/certbot/certs`
 
-```console
-$ ls -alh certs/
-...
-drwx------ 3 root         root              41 Jul 11 15:44 accounts
-drwx------ 3 root         root              36 Jul 11 15:44 archive
-drwxr-xr-x 2 root         root              33 Jul 11 15:44 csr
-drwx------ 2 root         root              33 Jul 11 15:44 keys
-drwx------ 3 root         root              49 Jul 11 15:44 live
-drwxr-xr-x 2 root         root              41 Jul 11 15:44 renewal
-drwxr-xr-x 5 root         root              40 Jul 11 15:44 renewal-hooks
-```
+Requires `sudo` rights due to `root` ownership:
 
 ```console
-$ tree certs/
-certs/
+$ sudo ls -alh /home/username/certbot/certs/
+...
+drwx------ 4 root    root   84 Jul 15 10:24 accounts
+drwx------ 3 root    root   36 Jul 15 10:25 archive
+drwxr-xr-x 2 root    root   33 Jul 15 10:24 csr
+drwx------ 2 root    root   33 Jul 15 10:24 keys
+drwx------ 3 root    root   49 Jul 15 10:25 live
+drwxr-xr-x 2 root    root   41 Jul 15 10:25 renewal
+drwxr-xr-x 5 root    root   40 Jul 15 10:23 renewal-hooks
+```
+
+Tree view:
+
+```console
+$ sudo tree /home/username/certbot/certs/
+/home/username/certbot/certs/
 ├── accounts
+│   ├── acme-staging-v02.api.letsencrypt.org
+│   │   └── directory
+│   │       └── 28b39d12b31a574a9c2a2fa4dd951e86
+│   │           ├── meta.json
+│   │           ├── private_key.json
+│   │           └── regr.json
 │   └── acme-v02.api.letsencrypt.org
 │       └── directory
-│           └── cad102059f982a03619d6ba2b3f237de
+│           └── c26d5b8ac852d768bb09a4775691fe88
 │               ├── meta.json
 │               ├── private_key.json
 │               └── regr.json
@@ -333,7 +343,7 @@ certs/
     ├── post
     └── pre
 
-15 directories, 16 files
+18 directories, 19 files
 ```
 
 ### References
