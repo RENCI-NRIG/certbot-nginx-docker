@@ -65,8 +65,8 @@ server {
     }
 }
 EOF
-    docker cp ./lets_encrypt.conf nginx:/etc/nginx/conf.d/default.conf
-    docker exec nginx /usr/sbin/nginx -s reload
+    docker cp ./lets_encrypt.conf nginx-certbot:/etc/nginx/conf.d/default.conf
+    docker exec nginx-certbot /usr/sbin/nginx -s reload
     rm -f ./lets_encrypt.conf
     sleep 3s
     OUTFILE=./validate.html
@@ -87,8 +87,8 @@ EOF
 </html>
 EOF
     echo "Q" | openssl s_client -connect ${DOMAINS[0]}:${HTTPS_PORT} > ./openssl-info.txt
-    docker cp validate.html nginx:/usr/share/nginx/html/index.html
-    docker cp openssl-info.txt nginx:/usr/share/nginx/html/
+    docker cp validate.html nginx-certbot:/usr/share/nginx/html/index.html
+    docker cp openssl-info.txt nginx-certbot:/usr/share/nginx/html/
 }
 
 ### Main ###
@@ -111,14 +111,14 @@ echo
 echo "### Starting nginx ..."
 _lets_encrypt_conf
 if [[ ${SELINUX} == "1" ]]; then
-    docker run -d --name nginx \
+    docker run -d --name nginx-certbot \
         --publish ${HTTP_PORT}:${HTTP_PORT} \
         --publish ${HTTPS_PORT}:${HTTPS_PORT} \
         --volume ${CERTS:-./certs}:/etc/letsencrypt:z,ro \
         --volume ${CERTS_DATA:-./certs-data}:/data/letsencrypt:z,rw \
         nginx:alpine
 else
-    docker run -d --name nginx \
+    docker run -d --name nginx-certbot \
         --publish ${HTTP_PORT}:${HTTP_PORT} \
         --publish ${HTTPS_PORT}:${HTTPS_PORT} \
         --volume ${CERTS:-./certs}:/etc/letsencrypt \
@@ -126,8 +126,8 @@ else
         nginx:alpine
 fi
 sleep 3s
-docker cp ./lets_encrypt.conf nginx:/etc/nginx/conf.d/default.conf
-docker exec nginx /usr/sbin/nginx -s reload
+docker cp ./lets_encrypt.conf nginx-certbot:/etc/nginx/conf.d/default.conf
+docker exec nginx-certbot /usr/sbin/nginx -s reload
 rm -f ./lets_encrypt.conf
 sleep 3s
 
@@ -176,7 +176,7 @@ if [[ ${STAGING} != "1" ]]; then
     echo
     echo "### Reloading nginx ..."
     _validate_cert_conf
-    docker exec nginx nginx -s reload
+    docker exec nginx-certbot nginx -s reload
     echo
     echo "### Navigate to https://${DOMAINS[0]} and verify that your certificate has been installed ..."
     echo
@@ -184,7 +184,7 @@ if [[ ${STAGING} != "1" ]]; then
     rm -f validate.html openssl-info.txt
 fi
 
-docker stop nginx
-docker rm -fv nginx
+docker stop nginx-certbot
+docker rm -fv nginx-certbot
 rm -rf ${CERTS_DATA}
 exit 0;

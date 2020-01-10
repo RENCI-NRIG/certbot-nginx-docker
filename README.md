@@ -27,7 +27,7 @@ Assumes that Docker is installed, and that you have `sudo` rights on the machine
 
 ### Generate initial certificate
 
-Update the `.env` file, then run:
+Create a `.env` file from `env.template`, then run:
 
 ```
 ./letsencrypt-init.sh
@@ -37,7 +37,7 @@ and follow the prompts
 
 ### Renew existing certificate
 
-Update the `.env` file, then run:
+Update the `.env` file if needed, then run:
 
 ```
 ./letsencrypt-renew.sh
@@ -48,7 +48,7 @@ and follow the prompts
 
 ### <a name="env"></a>Configuration file: `.env`
 
-Example values are provided, but the `.env` file should be updated to match your host and configuration requirements.
+Example values are provided in `env.template`, but your `.env` file should be updated to match host and configuration requirements for your deployment.
 
 ```bash
 # Environment variable declaration
